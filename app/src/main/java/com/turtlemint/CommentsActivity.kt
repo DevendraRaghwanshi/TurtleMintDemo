@@ -46,7 +46,7 @@ class CommentsActivity : AppCompatActivity() {
         adapter = CommentsAdapter(this, list!!)
         binding.rvComments.adapter = adapter
 
-        CommonApiCall.getInstance().getComments(listObserver, url)
+        CommonApiCall.instance?.getComments(listObserver, url)
     }
 
     private var listObserver: DisposableObserver<ArrayList<IssuesModel>> =

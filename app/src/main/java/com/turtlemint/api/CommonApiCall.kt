@@ -1,81 +1,61 @@
-package com.turtlemint.api;
+package com.turtlemint.api
 
-import androidx.annotation.NonNull;
+import com.turtlemint.model.IssuesModel
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
 
-import com.turtlemint.model.IssuesModel;
+class CommonApiCall private constructor() {
+    fun getIssueList(observer: DisposableObserver<ArrayList<IssuesModel>>) {
+        RestClient.getInstance().service.getIssueList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : Observer<ArrayList<IssuesModel>> {
+                override fun onSubscribe(d: Disposable) {}
+                override fun onNext(o: ArrayList<IssuesModel>) {
+                    observer.onNext(o)
+                }
 
-import java.util.ArrayList;
+                override fun onError(e: Throwable) {
+                    observer.onError(e)
+                }
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
-
-public class CommonApiCall {
-    private static CommonApiCall commonClassForAPI;
-
-
-    public static CommonApiCall getInstance() {
-        if (commonClassForAPI == null) {
-            commonClassForAPI = new CommonApiCall();
-        }
-        return commonClassForAPI;
+                override fun onComplete() {
+                    observer.onComplete()
+                }
+            })
     }
 
-    private CommonApiCall() {
+    fun getComments(observer: DisposableObserver<ArrayList<IssuesModel>>, url: String?) {
+        RestClient.getInstance().service.getComments(url!!)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : Observer<ArrayList<IssuesModel>> {
+                override fun onSubscribe(d: Disposable) {}
+                override fun onNext(o: ArrayList<IssuesModel>) {
+                    observer.onNext(o)
+                }
+
+                override fun onError(e: Throwable) {
+                    observer.onError(e)
+                }
+
+                override fun onComplete() {
+                    observer.onComplete()
+                }
+            })
     }
 
-
-    public void getIssueList(DisposableObserver<ArrayList<IssuesModel>> observer) {
-        RestClient.getInstance().getService().getIssueList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ArrayList<IssuesModel>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(@NonNull ArrayList<IssuesModel> o) {
-                        observer.onNext(o);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        observer.onError(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        observer.onComplete();
-                    }
-                });
-    }
-
-    public void getComments(DisposableObserver<ArrayList<IssuesModel>> observer, String url) {
-        RestClient.getInstance().getService().getComments(url)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ArrayList<IssuesModel>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(@NonNull ArrayList<IssuesModel> o) {
-                        observer.onNext(o);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        observer.onError(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        observer.onComplete();
-                    }
-                });
+    companion object {
+        private var commonClassForAPI: CommonApiCall? = null
+        val instance: CommonApiCall?
+            get() {
+                if (commonClassForAPI == null) {
+                    commonClassForAPI = CommonApiCall()
+                }
+                return commonClassForAPI
+            }
     }
 }

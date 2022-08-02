@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         binding.rvIssues.adapter = adapter
 
         if (Utils.isNetworkAvailable(applicationContext)) {
-            CommonApiCall.getInstance().getIssueList(listObserver)
+            CommonApiCall.instance.getIssueList(listObserver)
         } else {
             MyApplication.getInstance().repository.items.observe(this) { issueList: List<IssuesModel> ->
                 list?.addAll(issueList)
